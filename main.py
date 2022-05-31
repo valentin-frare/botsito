@@ -38,6 +38,7 @@ style = "<style>body{background-color:#1A374D;margin:0;padding:0;font-family:Ari
 
 def total_coins(array_ret: list) -> int:
     count = 0
+    coinsTotal = 0
     for ret in array_ret:
         try: coins = ret[1]['coins']
         except: coins = 0
