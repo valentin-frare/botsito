@@ -56,23 +56,17 @@ def formateo(array_ret: list):
 
         json_content = ret[i][1]
 
-        if ret[i].__contains__('generations'):
-            try: generations = json_content['generations']
-            except: generations = ""
-        if ret[i].__contains__('errors'):
-            try: errors = json_content['errors']
-            except: errors = ""
-        if ret[i].__contains__('last-time'):
-            try: last_time = json_content['last-time']
-            except: last_time = ""
-        if ret[i].__contains__('coins'):
-            try: coins = json_content['coins']
-            except: coins = ""
+        print(json_content)
+
+        generations = json_content['generations']
+        errors = json_content['errors']
+        last_time = json_content['last-time']
+        coins = json_content['coins']
         ret[i] = f'{components.generations(str(i))}{components.email(email)}'
-        if generations: ret[i] += components.generations(generations)
-        if errors: ret[i] += components.errors(errors)
-        if last_time: ret[i] += components.last_time(last_time)
-        if coins: ret[i] += components.generations(str(coins))
+        ret[i] += components.generations(generations)
+        ret[i] += components.errors(errors)
+        ret[i] += components.last_time(last_time)
+        ret[i] += components.generations(str(coins))
 
     return map(lambda r: components.row_container(r), ret)
 
