@@ -198,7 +198,7 @@ class App:
         return (int(Z) *60)
     def generation(self, email: str, password: str):
         try:
-            print(self.client.login(email = email, password = password))
+            self.client.login(email = email, password = password)
             if not f'{email}' in db.all()[0]["page_out"]: db.update({'coins': 0}, Query().page_out == email)
             #print(f"[\033[1;31mcoins-generator\033[0m][\033[1;36mjoin-community\033[0m]: {self.client.join_community(comId = self.comId, inviteId = self.invitationId)['api:message']}.")
             self.client.lottery(comId = self.comId, time_zone = self.tzc())
@@ -208,7 +208,7 @@ class App:
             except: db.update({'coins': 0}, Query().page_out == email)
 
             for i2 in range(25):
-                self.client.send_active_object(comId = self.comId, timers = [{'start': int(time.time()), 'end': int(time.time()) + 300} for _ in range(50)], tz = self.tzc())
+                print(self.client.send_active_object(comId = self.comId, timers = [{'start': int(time.time()), 'end': int(time.time()) + 300} for _ in range(50)], tz = self.tzc()))
                 time.sleep(1 + random.uniform(.8, 1.4))
             #print(f"[\033[1;31mcoins-generator\033[0m][\033[1;25;32mend\033[0m][{email}]: Finished.")
             tz = pytz.timezone('America/Buenos_Aires')
