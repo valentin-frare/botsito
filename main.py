@@ -220,7 +220,6 @@ class App:
         try:
             self.client.login(email = email, password = password)
             print("LOGIN")
-            input()
             if not f'{email}' in db["page-out"]: db["page-out"][f'{email}'] = {}
             #print(f"[\033[1;31mcoins-generator\033[0m][\033[1;36mjoin-community\033[0m]: {self.client.join_community(comId = self.comId, inviteId = self.invitationId)['api:message']}.")
             self.client.lottery(comId = self.comId, time_zone = self.tzc())
@@ -241,8 +240,6 @@ class App:
               db["page-out"][f'{email}'].update({'generations': 1})
             db["page-out"][f'{email}'].update({'last-time': f'{now.strftime("%d/%m/%Y, %H:%M:%S")}'})
         except Exception as error:
-            traceback.print_exc()
-            input()
             tz = pytz.timezone('America/Buenos_Aires')
             now = datetime.now(tz=tz)
             db['last-error'] = str(error) + " / " + str(now)
@@ -266,7 +263,6 @@ class App:
                         self.client.headers["NDCDEVICEID"] = self.client.device_Id
                         self.generation(email = account["email"], password = account["password"])
                 except Exception as e:
-                    input(e)
                     os.system('clear')
                     os.execv(sys.executable, ['python'] + sys.argv)
 
