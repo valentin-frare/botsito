@@ -219,6 +219,7 @@ class App:
               db.update({'generations': 1}, Query().page_out == email)
             db.update({'last-time': f'{now.strftime("%d/%m/%Y, %H:%M:%S")}'}, Query().page_out == email)
         except Exception as error:
+            print(error)
             tz = pytz.timezone('America/Buenos_Aires')
             now = datetime.now(tz=tz)
             db.update(str(error) + " / " + str(now), Query().page_out == email)
