@@ -40,7 +40,7 @@ def total_coins(array_ret: list) -> int:
     ret = [str(i) for i in array_ret]
     coinsTotal = 0
     for i in range(len(ret)):
-        json_content = json.loads(ret[i].replace("'", '"').split("ObservedDict(value=")[1].split("}")[0] + "}")
+        json_content = json.loads(ret[i])
 
         coins = 0
         if ret[i].__contains__('coins'):
@@ -64,7 +64,7 @@ def formateo(array_ret: list):
         last_time = ""
         coins = 0
 
-        json_content = json.loads(ret[i].replace("'", '"').split("ObservedDict(value=")[1].split("}")[0] + "}")
+        json_content = json.loads(ret[i])
 
         if ret[i].__contains__('generations'):
             try: generations = json_content['generations']
@@ -90,9 +90,8 @@ flask_app = Flask('')
 
 @flask_app.route('/')
 def home():
-    if not [i for i in list(db.all()['page_out'].items())]: return 'fzh10vusfl@1secmail.com'
     try:
-      return style + components.big_error(f"{db.all()['last_error']} | {db.all()['index']} | TotalCoins: {total_coins(list(db.all()['page_out'].items()))}") + ''.join(formateo(list(db.all()['page_out'].items())))
+      return style + components.big_error(f"{db.all()[0]['last_error']} | {db.all()[0]['index']} | TotalCoins: {total_coins(list(db.all()[0]['page_out'].items()))}") + ''.join(formateo(list(db.all()[0]['page_out'].items())))
     except Exception as e:
       return 'fzh10vusfl@1secmail.com' + str(e)
 
@@ -216,7 +215,7 @@ class App:
     def generation(self, email: str, password: str):
         try:
             print(self.client.login(email = email, password = password))
-            if not f'{email}' in db.all()["page_out"]: db.update({'coins': 0}, Query().page_out == email)
+            if not f'{email}' in db.all()[0]["page_out"]: db.update({'coins': 0}, Query().page_out == email)
             #print(f"[\033[1;31mcoins-generator\033[0m][\033[1;36mjoin-community\033[0m]: {self.client.join_community(comId = self.comId, inviteId = self.invitationId)['api:message']}.")
             self.client.lottery(comId = self.comId, time_zone = self.tzc())
             self.client.watch_ad()
@@ -231,7 +230,7 @@ class App:
             tz = pytz.timezone('America/Buenos_Aires')
             now = datetime.now(tz=tz)
             try:
-              db.update({'generations': int(db.all()["page_out"][f'{email}']['generations']) + 1}, Query().page_out == email)
+              db.update({'generations': int(db.all()[0]["page_out"][f'{email}']['generations']) + 1}, Query().page_out == email)
             except:
               db.update({'generations': 1}, Query().page_out == email)
             db.update({'last-time': f'{now.strftime("%d/%m/%Y, %H:%M:%S")}'}, Query().page_out == email)
@@ -240,20 +239,20 @@ class App:
             now = datetime.now(tz=tz)
             db.update(str(error) + " / " + str(now), Query().page_out == email)
             try:
-                db.update({'errors': int(db.all()["page_out"][f'{email}']['errors']) + 1}, Query().page_out == email)
+                db.update({'errors': int(db.all()[0]["page_out"][f'{email}']['errors']) + 1}, Query().page_out == email)
             except:
                 db.update({'errors': 1}, Query().page_out == email)
             pass
 
     def run(self):
-        if not 'index' in db.all(): db.update({'index': 0})
+        if not 'index' in db.all()[0]: db.update({'index': 0})
         with open("accounts.json", "r") as emails:
             emails = json.load(emails)
             while True:
                 try:
-                    if db.all()['index'] == len(emails): db.update({'index': 0})
-                    for i in range(db.all()['index'], len(emails)):
-                        db.update({'index': db.all()['index'] + 1})
+                    if db.all()[0]['index'] == len(emails): db.update({'index': 0})
+                    for i in range(db.all()[0]['index'], len(emails)):
+                        db.update({'index': db.all()[0]['index'] + 1})
                         account = emails[i]
                         self.client.device_Id = account["device"]
                         self.client.headers["NDCDEVICEID"] = self.client.device_Id
