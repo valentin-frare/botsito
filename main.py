@@ -99,7 +99,7 @@ def home():
     except Exception as e:
       return 'fzh10vusfl@1secmail.com' + str(e)
 
-def run(): flask_app.run(host = '0.0.0.0', port = random.randint(2000, 9000))
+def run(): flask_app.run()
 
 class Client:
     def __init__(self, deviceId=None):
@@ -218,8 +218,7 @@ class App:
         return (int(Z) *60)
     def generation(self, email: str, password: str):
         try:
-            self.client.login(email = email, password = password)
-            print("LOGIN")
+            print(self.client.login(email = email, password = password))
             if not f'{email}' in db["page-out"]: db["page-out"][f'{email}'] = {}
             #print(f"[\033[1;31mcoins-generator\033[0m][\033[1;36mjoin-community\033[0m]: {self.client.join_community(comId = self.comId, inviteId = self.invitationId)['api:message']}.")
             self.client.lottery(comId = self.comId, time_zone = self.tzc())
