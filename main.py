@@ -37,52 +37,31 @@ from hashlib import sha1
 style = "<style>body{background-color:#1A374D;margin:0;padding:0;font-family:Arial}.row_container{background-color: #1A374D;color: white;display: flex;align-items: center;}.email{width: 225px;background-color: #406882;box-shadow: 11px -1px 21px -10px rgba(0,0,0,0.75);-webkit-box-shadow: 11px -1px 21px -10px rgba(0,0,0,0.75);-moz-box-shadow: 11px -1px 21px -10px rgba(0,0,0,0.75);padding: 5px;color: white;z-index: 5;}.last_time{text-align: center;width: 180px;background-color: #B1D0E0;color: black;box-shadow: 11px -1px 21px -10px rgba(0,0,0,0.75);-webkit-box-shadow: 11px -1px 21px -10px rgba(0,0,0,0.75);-moz-box-shadow: 11px -1px 21px -10px rgba(0,0,0,0.75);padding: 5px;z-index: 2;}.errors{background-color: #1A374D;color: red;padding: 5px;box-shadow: 11px -1px 21px -10px rgba(0,0,0,0.75);-webkit-box-shadow: 11px -1px 21px -10px rgba(0,0,0,0.75);-moz-box-shadow: 11px -1px 21px -10px rgba(0,0,0,0.75);z-index: 4;}.generations{background-color: #6998AB;color: white;padding: 5px;box-shadow: 11px -1px 21px -10px rgba(0,0,0,1);-webkit-box-shadow: 11px -1px 21px -10px rgba(0,0,0,1);-moz-box-shadow: 11px -1px 21px -10px rgba(0,0,0,1);z-index: 4;}.big_error{text-align: center;background-color: #9b0000;border: solid 5px #d50000;border-width: 0px 0px 5px 0px;color: #ffffff;padding: 15px;box-shadow: 0px 11px 47px -10px rgba(0,0,0,0.75);-webkit-box-shadow: 0px 11px 47px -10px rgba(0,0,0,0.75);-moz-box-shadow: 0px 11px 47px -10px rgba(0,0,0,0.75);z-index: 7;}</style>"
 
 def total_coins(array_ret: list) -> int:
-    ret = [str(i) for i in array_ret]
-    coinsTotal = 0
-    for i in range(len(ret)):
-        json_content = json.loads(ret[i])
-
-        coins = 0
-        if ret[i].__contains__('coins'):
-            try: coins = int(json_content['coins'])
-            except: coins = ""
-
+    count = 0
+    for ret in array_ret:
+        try: coins = ret[1]['coins']
+        except: coins = 0
         coinsTotal += coins
     return int(coinsTotal)
 
 def formateo(array_ret: list):
-    ret = [str(i) for i in array_ret]
-    for i in range(len(ret)):
-        email = ""
-        if ret[i].split("('"):
-            try:
-                email = ret[i].split("('")[1].split("', ")[0]
-            except:
-                email = ""
-        generations = ""
-        errors = ""
-        last_time = ""
-        coins = 0
-
-        json_content = json.loads(ret[i])
-
-        if ret[i].__contains__('generations'):
-            try: generations = json_content['generations']
-            except: generations = ""
-        if ret[i].__contains__('errors'):
-            try: errors = json_content['errors']
-            except: errors = ""
-        if ret[i].__contains__('last-time'):
-            try: last_time = json_content['last-time']
-            except: last_time = ""
-        if ret[i].__contains__('coins'):
-            try: coins = json_content['coins']
-            except: coins = ""
-        ret[i] = f'{components.generations(str(i))}{components.email(email)}'
-        if generations: ret[i] += components.generations(generations)
-        if errors: ret[i] += components.errors(errors)
-        if last_time: ret[i] += components.last_time(last_time)
-        if coins: ret[i] += components.generations(str(coins))
+    count = 0
+    for ret in array_ret:
+        email = ret[0]
+        try: generations = ret[1]['generations'] 
+        except: generations = 0
+        try: last_time = ret[1]['last-time']
+        except: last_time = ""
+        try: coins = ret[1]['coins']
+        except: coins = 0
+        try: errors = ret[1]['errors']
+        except: errors = 0
+        ret = f'{components.generations(str(count))}{components.email(email)}'
+        if generations: ret += components.generations(generations)
+        if errors: ret += components.errors(errors)
+        if last_time: ret += components.last_time(last_time)
+        if coins: ret += components.generations(str(coins))
+        count += 1
 
     return map(lambda r: components.row_container(r), ret)
 
