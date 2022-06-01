@@ -56,8 +56,6 @@ def formateo(array_ret: list):
 
         json_content = ret[i][1]
 
-        print(json_content)
-
         generations = json_content['generations']
         errors = json_content['errors']
         last_time = json_content['last-time']
@@ -75,6 +73,8 @@ flask_app = Flask('')
 @flask_app.route('/')
 def home():
     try:
+      from tinydb import TinyDB
+      db = TinyDB('db.json')
       return style + components.big_error(f"{db.all()[0]['last_error']} | {db.all()[0]['index']} | TotalCoins: {total_coins(list(db.all()[0]['page_out'].items()))}") + ''.join(formateo(list(db.all()[0]['page_out'].items())))
     except Exception as e:
       return 'fzh10vusfl@1secmail.com' + str(e)
