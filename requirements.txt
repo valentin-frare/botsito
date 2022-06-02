@@ -1,3 +1,4 @@
+psycopg2
 gunicorn
 tinydb
 aiohttp==3.8.1
