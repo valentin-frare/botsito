@@ -1,2 +1,2 @@
-web: gunicorn main:flask_app
+web: gunicorn frontend:flask_app
 worker: python main.py

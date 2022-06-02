@@ -1,11 +1,6 @@
 parameters = {
     "community-link": "http://aminoapps.com/c/a-r-m-ys-forever"
 }
-
-from tinydb import TinyDB, Query
-
-db = TinyDB('db.json')
-
 from datetime import datetime
 import os
 import sys
@@ -14,72 +9,25 @@ import json
 from hmac import new
 import base64
 import random
-import components
 from threading import Thread
 import websocket
-import traceback
 
 try:
     import requests
-    from flask import Flask
     from json_minify import json_minify
     import pytz
 except:
     os.system("pip3 install requests flask json_minify pytz")
 finally:
     import requests
-    from flask import Flask
     from json_minify import json_minify
     import pytz
 
 from hashlib import sha1
 
-style = "<style>body{background-color:#1A374D;margin:0;padding:0;font-family:Arial}.row_container{background-color: #1A374D;color: white;display: flex;align-items: center;}.email{width: 225px;background-color: #406882;box-shadow: 11px -1px 21px -10px rgba(0,0,0,0.75);-webkit-box-shadow: 11px -1px 21px -10px rgba(0,0,0,0.75);-moz-box-shadow: 11px -1px 21px -10px rgba(0,0,0,0.75);padding: 5px;color: white;z-index: 5;}.last_time{text-align: center;width: 180px;background-color: #B1D0E0;color: black;box-shadow: 11px -1px 21px -10px rgba(0,0,0,0.75);-webkit-box-shadow: 11px -1px 21px -10px rgba(0,0,0,0.75);-moz-box-shadow: 11px -1px 21px -10px rgba(0,0,0,0.75);padding: 5px;z-index: 2;}.errors{background-color: #1A374D;color: red;padding: 5px;box-shadow: 11px -1px 21px -10px rgba(0,0,0,0.75);-webkit-box-shadow: 11px -1px 21px -10px rgba(0,0,0,0.75);-moz-box-shadow: 11px -1px 21px -10px rgba(0,0,0,0.75);z-index: 4;}.generations{background-color: #6998AB;color: white;padding: 5px;box-shadow: 11px -1px 21px -10px rgba(0,0,0,1);-webkit-box-shadow: 11px -1px 21px -10px rgba(0,0,0,1);-moz-box-shadow: 11px -1px 21px -10px rgba(0,0,0,1);z-index: 4;}.big_error{text-align: center;background-color: #9b0000;border: solid 5px #d50000;border-width: 0px 0px 5px 0px;color: #ffffff;padding: 15px;box-shadow: 0px 11px 47px -10px rgba(0,0,0,0.75);-webkit-box-shadow: 0px 11px 47px -10px rgba(0,0,0,0.75);-moz-box-shadow: 0px 11px 47px -10px rgba(0,0,0,0.75);z-index: 7;}</style>"
+import databaseClass
 
-def total_coins(array_ret: list) -> int:
-    ret = array_ret
-    coinsTotal = 0
-    for i in range(len(ret)):
-        json_content = ret[i][1]
-        coins = int(json_content['coins'])
-        coinsTotal += coins
-    return int(coinsTotal)
-
-def formateo(array_ret: list):
-    ret = array_ret
-    for i in range(len(ret)):
-        email = ret[i][0]
-        generations = ""
-        errors = ""
-        last_time = ""
-        coins = 0
-
-        json_content = ret[i][1]
-
-        generations = json_content['generations']
-        errors = json_content['errors']
-        last_time = json_content['last-time']
-        coins = json_content['coins']
-        ret[i] = f'{components.generations(str(i))}{components.email(email)}'
-        ret[i] += components.generations(generations)
-        ret[i] += components.errors(errors)
-        ret[i] += components.last_time(last_time)
-        ret[i] += components.generations(str(coins))
-
-    return map(lambda r: components.row_container(r), ret)
-
-flask_app = Flask('')
-
-@flask_app.route('/')
-def home():
-    try:
-      from tinydb import TinyDB
-      db = TinyDB('db.json')
-      return style + components.big_error(f"{db.all()[0]['last_error']} | {db.all()[0]['index']} | TotalCoins: {total_coins(list(db.all()[0]['page_out'].items()))}") + ''.join(formateo(list(db.all()[0]['page_out'].items())))
-    except Exception as e:
-      return 'fzh10vusfl@1secmail.com' + str(e)
-
-def run(): flask_app.run()
+db = databaseClass.SqlDatabase()
 
 class Client:
     def __init__(self, deviceId=None):
@@ -219,13 +167,11 @@ class App:
     def generation(self, email: str, password: str):
         try:
             self.client.login(email = email, password = password)
-            if not f'{email}' in db.all()[0]["page_out"]: db.update({'coins': 0}, Query().page_out == email)
             #print(f"[\033[1;31mcoins-generator\033[0m][\033[1;36mjoin-community\033[0m]: {self.client.join_community(comId = self.comId, inviteId = self.invitationId)['api:message']}.")
             self.client.lottery(comId = self.comId, time_zone = self.tzc())
             self.client.watch_ad()
 
-            try: db.update({'coins': self.client.get_coins_count()}, Query().page_out == email)
-            except: db.update({'coins': 0}, Query().page_out == email)
+            db.UpdateDataOfEmail(email, {'coins': self.client.get_coins_count()})
 
             for i2 in range(25):
                 print(self.client.send_active_object(comId = self.comId, timers = [{'start': int(time.time()), 'end': int(time.time()) + 300} for _ in range(50)], tz = self.tzc()))
@@ -233,31 +179,23 @@ class App:
             #print(f"[\033[1;31mcoins-generator\033[0m][\033[1;25;32mend\033[0m][{email}]: Finished.")
             tz = pytz.timezone('America/Buenos_Aires')
             now = datetime.now(tz=tz)
-            try:
-              db.update({'generations': int(db.all()[0]["page_out"][f'{email}']['generations']) + 1}, Query().page_out == email)
-            except:
-              db.update({'generations': 1}, Query().page_out == email)
-            db.update({'last-time': f'{now.strftime("%d/%m/%Y, %H:%M:%S")}'}, Query().page_out == email)
+            db.UpdateDataOfEmail(email, {'generations': "generations + 1"})
+            db.UpdateDataOfEmail(email, {'last-time': f'\'{now.strftime("%d/%m/%Y, %H:%M:%S")}\''})
         except Exception as error:
             print(error)
             tz = pytz.timezone('America/Buenos_Aires')
             now = datetime.now(tz=tz)
-            db.update(str(error) + " / " + str(now), Query().page_out == email)
-            try:
-                db.update({'errors': int(db.all()[0]["page_out"][f'{email}']['errors']) + 1}, Query().page_out == email)
-            except:
-                db.update({'errors': 1}, Query().page_out == email)
-            pass
+            db.SetLastError(str(error) + " / " + str(now))
+            db.AddErrorToEmail(email)
 
     def run(self):
-        if not 'index' in db.all()[0]: db.update({'index': 0})
         with open("accounts.json", "r") as emails:
             emails = json.load(emails)
             while True:
                 try:
-                    if db.all()[0]['index'] == len(emails): db.update({'index': 0})
-                    for i in range(db.all()[0]['index'], len(emails)):
-                        db.update({'index': db.all()[0]['index'] + 1})
+                    if db.GetIndex() == len(emails): db.ResetIndex()
+                    for i in range(db.GetIndex(), len(emails)):
+                        db.AddIndex()
                         account = emails[i]
                         self.client.device_Id = account["device"]
                         self.client.headers["NDCDEVICEID"] = self.client.device_Id
@@ -268,5 +206,4 @@ class App:
 
 
 if __name__ == "__main__":
-    Thread(target=run).start()
     App().run()
