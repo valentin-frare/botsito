@@ -29,6 +29,8 @@ import databaseClass
 
 db = databaseClass.SqlDatabase()
 
+print("gogogo")
+
 class Client:
     def __init__(self, deviceId=None):
         self.api = "https://service.narvii.com/api/v1"
