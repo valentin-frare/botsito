@@ -203,8 +203,9 @@ class App:
                         self.client.headers["NDCDEVICEID"] = self.client.device_Id
                         self.generation(email = account["email"], password = account["password"])
                 except Exception as e:
-                    os.system('clear')
-                    os.execv(sys.executable, ['python'] + sys.argv)
+                    print(e)
+                    ##os.system('clear')
+                    #os.execv(sys.executable, ['python'] + sys.argv)
 
 
 if __name__ == "__main__":
