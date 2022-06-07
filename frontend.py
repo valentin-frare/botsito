@@ -13,18 +13,21 @@ def total_coins(array_ret: list) -> int:
         coinsTotal += coins
     return int(coinsTotal)
 
+ # TODO: ARREGLAR ESTA MIERDA QUE ESTA MAL CUADRADA; TESTEAR APARTE
+
 def formateo(array_ret: list):
     ret = array_ret
     for i in range(len(ret)):
+        #(697, 'h8vylvoh5r@1secmail.org', 52, '12/03/2022 07:11:18', 2855, 112)
         email = ret[i][1]
         generations = ret[i][2]
-        last_time = ret[i][2]
-        coins = ret[i][3]
-        errors = ret[i][4]
+        last_time = ret[i][3]
+        coins = ret[i][4]
+        errors = ret[i][5]
         
         ret[i] = f'{components.generations(str(i))}{components.email(email)}'
         ret[i] += components.generations(generations)
-        ret[i] += components.errors(errors)
+        ret[i] += components.errors(errors) 
         ret[i] += components.last_time(last_time)
         ret[i] += components.generations(str(coins))
 

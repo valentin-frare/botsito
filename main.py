@@ -180,7 +180,7 @@ class App:
             tz = pytz.timezone('America/Buenos_Aires')
             now = datetime.now(tz=tz)
             db.UpdateDataOfEmail(email, {'generations': "generations + 1"})
-            db.UpdateDataOfEmail(email, {'last-time': f'\'{now.strftime("%d/%m/%Y, %H:%M:%S")}\''})
+            db.UpdateDataOfEmail(email, {'last_time': f'\'{now.strftime("%d/%m/%Y, %H:%M:%S")}\''})
         except Exception as error:
             print(error)
             tz = pytz.timezone('America/Buenos_Aires')

@@ -23,7 +23,7 @@ class SqlDatabase:
     def UpdateDataOfEmail(self, email: str, data: dict):
         sqlCommand = "UPDATE Botsitos "
         for key in data.keys():
-            sqlCommand += f"SET {key} = {data[key]} "
+            sqlCommand += f"SET {key}={data[key]} "
         sqlCommand += f"WHERE email = '{email}'"
         self.cursor.execute(sqlCommand)
         self.connection.commit()
@@ -73,6 +73,3 @@ class SqlDatabase:
         for wallet in wallets:
             totalCoins += wallet[0]
         return int(totalCoins)
-    
-db = SqlDatabase()
-print(db.GetAllBotsitos())
